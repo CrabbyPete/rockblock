@@ -13,32 +13,56 @@ def chunks(lst):
         yield lst[i:i + 340]
 
 
-def main(file='./fish.jpg', uart='/dev/ttyUSB0'):
+def main(file='./fish.jpg', uart='/dev/serial0'):
     """
     Main code to send a jpg image to the Iridium network
     """
 
-    input_jpeg = open(file, "rb").read()
+    jpeg = open(file, "rb").read()
     uart = serial.Serial('/dev/serial0', 19200)
     rb = RockBlock(uart)
 
-
-
     # Reduce the size of the jpeg as much as possible. This takes time
-    optimized_jpeg = pyguetzli.process_jpeg_bytes(input_jpeg)
-    with open('fish_small.jpg','wb') as save:
-        for cnt, chunk in enumerate(chunks(optimized_jpeg)):
-            rb.data = chunk
-            status = rb.satellite_transfer()
+    #jpeg = pyguetzli.process_jpeg_bytes(jpeg)
 
-            retry = 0
-            while status[0] > 8:
-                time.sleep(10)
-                status = rb.satellite_transfer()
-                print(retry, status)
-                retry += 1
+    rb.text_out = "BEGIN"
+    status = rb.satellite_transfer()
+    retry = 0
+    while status[0] > 8:
+        time.sleep(10)
+        status = rb.satellite_transfer()
+        print(retry, status)
+        retry += 1
         
-            print(f"\nDONE with {cnt.")
+    print("DONE with BEGIN")
 
+    for cnt, chunk in enumerate(chunks(jpeg)):
+        print(chunk)
+        rb.data_out = chunk
+        status = rb.satellite_transfer()
+
+        retry = 0
+        while status[0] > 8:
+            time.sleep(10)
+            status = rb.satellite_transfer()
+            print(retry, status)
+            retry += 1
+        
+        print("DONE {}".format(cnt))
+
+    rb.text_out = "END"
+    status = rb.satellite_transfer()
+    retry = 0
+    while status[0] > 8:
+        time.sleep(10)
+        status = rb.satellite_transfer()
+        print(retry, status)
+        retry += 1
+        
+    print("DONE with END")
+    return
+
+
+                  
 if __name__ == "__main__":
     main()
