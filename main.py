@@ -1,6 +1,6 @@
 import time
 import serial
-import pyguetzli
+#import pyguetzli
 
 from rockblock import RockBlock
 
@@ -65,4 +65,10 @@ def main(file='fish.jpeg', uart='/dev/serial0'):
 
 
 if __name__ == "__main__":
-    main()
+    import argparse
+    parser = argparse.ArgumentParser(description='Send an image through the RockBlock modem')
+    parser.add_argument('filename', metavar='N', type=str, help='name of the file to send')
+    parser.add_argument('--port', '-p', type=str, default='/dev/serial0', help='modem port')
+    args = parser.parse_args()
+
+    main(args.filename, args.port)
