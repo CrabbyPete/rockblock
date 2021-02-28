@@ -46,11 +46,11 @@ request.form comes back as:
 
 @app.route('/', methods=['POST'])
 def respond():
-    if not request.form:
+    if not request.json:
         log.error("Message received with no data")
         return abort(400,"No data")
     try:
-        command = bytes.fromhex(request.form['data']).decode('utf-8')
+        command = bytes.fromhex(request.json['data']).decode('utf-8')
     except ValueError:
         pass
     else:
@@ -69,9 +69,9 @@ def respond():
         return Response(status=200)
 
     # Collect all the messages and put them together when its done
-    jpeg = image.data_blocks.append(bytes(request.data))
-    with open("rock.jpg", 'wb') as f:
-        f.write(jpeg)
+    byte_data = request.json['data']
+    data = bytes.fromhex(request.json['data'])
+    jpeg = image.data_blocks.append(data)
 
     return Response(status=200)
 

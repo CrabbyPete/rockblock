@@ -3,8 +3,7 @@ import requests
 URL = 'http://qa.pagekite.me'
 
 
-def main(file='../fish.jpg'):
-    jpeg = open(file, "rb").read()
+def main():
     iridium = {'imei': '300534061386680',
                'device_type': 'ROCKBLOCK',
                'serial': '203129',
@@ -17,7 +16,7 @@ def main(file='../fish.jpg'):
                'data': '454e44'
                }
     # Send the begin
-    ok = requests.post(URL, data=iridium)
+    ok = requests.post(URL, json=iridium)
     if not ok:
         print( ok.text)
 

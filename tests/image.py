@@ -1,4 +1,6 @@
 import requests
+import binascii
+
 from time import sleep
 
 URL = 'http://qa.pagekite.me'
@@ -17,6 +19,7 @@ def main(file='../fish.jpeg', uart='/dev/serial0'):
     Main code to send a jpg image to the Iridium network
     """
     jpeg = open(file, "rb").read()
+    headers = {"Content-Type":"application/binary"}
     iridium = {'imei': '300534061386680',
                'device_type': 'ROCKBLOCK',
                'serial': '203129',
@@ -33,8 +36,11 @@ def main(file='../fish.jpeg', uart='/dev/serial0'):
     # Send the file in chunks of 340 ( the permitted maximum)
     for cnt, chunk in enumerate(chunks(jpeg)):
         iridium['momsn'] = str(cnt)
-        iridium['data'] = chunk
-        ok = requests.post(URL, data=iridium)
+        iridium['data'] = binascii.hexlify(chunk).decode('utf-8')
+
+        ok = requests.post(URL, json=iridium)
+        if not ok:
+            print(ok.text)
         sleep(1)
 
     return

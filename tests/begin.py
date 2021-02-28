@@ -17,7 +17,7 @@ def main(file='../fish.jpg'):
                }
 
     # Send the begin
-    ok = requests.post(URL, data=iridium)
+    ok = requests.post(URL, json=iridium)
     if not ok:
         print( ok.text)
 
