@@ -13,7 +13,7 @@ def chunks(lst):
         yield lst[i:i + 340]
 
 
-def main(file='./fish.jpg', uart='/dev/serial0'):
+def main(file='fish.jpeg', uart='/dev/serial0'):
     """
     Main code to send a jpg image to the Iridium network
     """
