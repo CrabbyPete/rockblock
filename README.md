@@ -40,4 +40,11 @@ Currently the server will create a file called jpeg.jpg. The is the resulting fi
 This code can be modified to put the file anywhere or send it to an email address. It can be   
 converted to an AWS lambda function as well.
 
+# Notes
+Sending a file to the Iridium requires credit and the line rental. The credits can be purchased in blocks of 100. The BEGIN
+and END message takes 1 credit each. The maximum number of bytes that can be sent in a message is 340. The image is broken
+into blocks of 340 and sent to the server. Each 340 block of data is 7 credits. A large JPEG file can require over 100 blocks
+to send the complete image. 
+
+
 
