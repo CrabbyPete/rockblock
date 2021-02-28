@@ -17,7 +17,6 @@ def main(file='./fish.jpg', uart='/dev/serial0'):
     """
     Main code to send a jpg image to the Iridium network
     """
-
     jpeg = open(file, "rb").read()
     uart = serial.Serial('/dev/serial0', 19200)
     rb = RockBlock(uart)
@@ -25,6 +24,7 @@ def main(file='./fish.jpg', uart='/dev/serial0'):
     # Reduce the size of the jpeg as much as possible. This takes time
     #jpeg = pyguetzli.process_jpeg_bytes(jpeg)
 
+    # Let the server know you will start transmitting
     rb.text_out = "BEGIN"
     status = rb.satellite_transfer()
     retry = 0
@@ -33,9 +33,9 @@ def main(file='./fish.jpg', uart='/dev/serial0'):
         status = rb.satellite_transfer()
         print(retry, status)
         retry += 1
-        
     print("DONE with BEGIN")
 
+    # Send the file in chunks of 340 ( the permitted maximum)
     for cnt, chunk in enumerate(chunks(jpeg)):
         print(chunk)
         rb.data_out = chunk
@@ -50,6 +50,7 @@ def main(file='./fish.jpg', uart='/dev/serial0'):
         
         print("DONE {}".format(cnt))
 
+    # Let the server know you are done
     rb.text_out = "END"
     status = rb.satellite_transfer()
     retry = 0
@@ -63,6 +64,5 @@ def main(file='./fish.jpg', uart='/dev/serial0'):
     return
 
 
-                  
 if __name__ == "__main__":
     main()
